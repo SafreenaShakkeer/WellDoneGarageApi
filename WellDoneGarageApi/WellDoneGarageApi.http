@@ -1,0 +1,6 @@
+@WellDoneGarageApi_HostAddress = http://localhost:5201
+
+GET {{WellDoneGarageApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
