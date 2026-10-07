@@ -13,6 +13,8 @@ namespace WellDoneGarageApi.Models
         public string? Description { get; set; }
 
         // Navigation property
-        public Customer? Customer { get; set; } = null!;
+        public Customer? Customer { get; set; }
+        public ICollection<VehicleOwnership> OwnershipHistory { get; set; } 
+            = new List<VehicleOwnership>();
     }
 }

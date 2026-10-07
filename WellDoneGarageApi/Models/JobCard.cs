@@ -12,7 +12,7 @@ namespace WellDoneGarageApi.Models
         public DateTime? CompletedAt { get; set; }
 
         // Navigation properties
-        public Vehicle? Vehicle { get; set; }
-        public Customer? Customer { get; set; }
+        public Vehicle Vehicle { get; set; } = null!;
+        public Customer Customer { get; set; } = null!;
     }
 }

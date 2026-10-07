@@ -4,6 +4,7 @@ namespace WellDoneGarageApi.DTOs
 {
     public class JobCardResponseDto
     {
+        public int Id { get; set; }
         public int VehicleId { get; set; }
         public string VehicleNumber { get; set; } = string.Empty;
         public string Model { get; set; } = string.Empty;

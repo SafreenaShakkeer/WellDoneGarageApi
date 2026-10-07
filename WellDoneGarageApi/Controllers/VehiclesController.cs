@@ -75,15 +75,28 @@ namespace WellDoneGarageApi.Controllers
                 return Conflict("Vehicle number already exists.");
             }
 
+            var now = DateTime.UtcNow;
             var vehicle = new Vehicle
             {
                 CustomerId = vehicleDto.CustomerId,
                 VehicleNumber = vehicleDto.VehicleNumber,
                 Model = vehicleDto.Model,
                 Description = vehicleDto.Description,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = now
             };
             _context.Vehicles.Add(vehicle);
+
+            var ownership = new VehicleOwnership
+            {
+                Vehicle = vehicle,
+                CustomerId = vehicleDto.CustomerId,
+                StartDate = now,
+                CreatedAt = now,
+                IsDeleted = false
+            };
+
+            _context.VehicleOwnerships.Add(ownership);
+
             await _context.SaveChangesAsync();
             var vehicleResponseDto = await _context.Vehicles
                 .Where(v => v.Id == vehicle.Id)
@@ -149,6 +162,77 @@ namespace WellDoneGarageApi.Controllers
                 .FirstAsync();
 
             return Ok(vehicleResponseDto);
+        }
+        [HttpPut("{vehicleId}/owner")]
+        public async Task<IActionResult> TransferOwnership(int vehicleId,[FromBody] VehicleOwnershipTransferDto dto)
+        {
+            var vehicle = await _context.Vehicles
+                .FirstOrDefaultAsync(v => v.Id == vehicleId);
+
+            if (vehicle == null)
+            {
+                return NotFound("Vehicle not found.");
+            }
+
+            var newCustomer = await _context.Customers
+                .FirstOrDefaultAsync(c => c.Id == dto.NewCustomerId);
+
+            if (newCustomer == null)
+            {
+                return NotFound("New customer not found.");
+            }
+
+            if (vehicle.CustomerId == dto.NewCustomerId)
+            {
+                return BadRequest("The customer is already the owner of this vehicle.");
+            }
+
+            var currentOwnership = await _context.VehicleOwnerships
+                .FirstOrDefaultAsync(vo =>
+                    vo.VehicleId == vehicleId &&
+                    vo.EndDate == null);
+
+            if (currentOwnership == null)
+            {
+                return BadRequest("Current ownership record not found.");
+            }
+
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                var transferDate = DateTime.UtcNow;
+
+                // Close current ownership
+                currentOwnership.EndDate = transferDate;
+                currentOwnership.UpdatedAt = transferDate;
+
+                // Create new ownership
+                var newOwnership = new VehicleOwnership
+                {
+                    VehicleId = vehicleId,
+                    CustomerId = dto.NewCustomerId,
+                    StartDate = transferDate,
+                    EndDate = null,
+                    CreatedAt = transferDate,
+                    IsDeleted = false
+                };
+
+                // Update current owner
+                vehicle.CustomerId = dto.NewCustomerId;
+                vehicle.UpdatedAt = transferDate;
+
+                _context.VehicleOwnerships.Add(newOwnership);
+
+                await _context.SaveChangesAsync();
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
         [HttpDelete]
         public async Task<IActionResult> DeleteVehicle(int id)

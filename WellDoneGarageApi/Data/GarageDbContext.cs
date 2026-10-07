@@ -18,6 +18,7 @@ namespace WellDoneGarageApi.Data
         public DbSet<JobItem> JobItems { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<VehicleOwnership> VehicleOwnerships { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -126,6 +127,28 @@ namespace WellDoneGarageApi.Data
             // Item query filter
             modelBuilder.Entity<Item>()
                 .HasQueryFilter(i => !i.IsDeleted);
+
+            // Vehicle Ownership
+            modelBuilder.Entity<VehicleOwnership>()
+                .ToTable("VehicleOwnership");
+
+            modelBuilder.Entity<VehicleOwnership>()
+                .HasOne(vo => vo.Vehicle)
+                .WithMany(v => v.OwnershipHistory)
+                .HasForeignKey(vo => vo.VehicleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<VehicleOwnership>()
+                .HasOne(vo => vo.Customer)
+                .WithMany(c => c.VehicleOwnerships)
+                .HasForeignKey(vo => vo.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Enddate in VehicleOwnership should be nullable
+            modelBuilder.Entity<VehicleOwnership>()
+                .HasIndex(vo => vo.VehicleId)
+                .IsUnique()
+                .HasFilter("[EndDate] IS NULL");
         }
     }
 }

@@ -7,8 +7,6 @@ namespace WellDoneGarageApi.DTOs
     {
         [Range(1, int.MaxValue)]
         public int VehicleId { get; set; }
-        [Range(1, int.MaxValue)]
-        public int CustomerId { get; set; }
         [Required]
         public string AssignedMechanic { get; set; } = string.Empty;
         [Required]

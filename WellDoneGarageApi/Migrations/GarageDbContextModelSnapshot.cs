@@ -383,6 +383,52 @@ namespace WellDoneGarageApi.Migrations
                     b.ToTable("Vehicles");
                 });
 
+            modelBuilder.Entity("WellDoneGarageApi.Models.VehicleOwnership", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("VehicleId")
+                        .IsUnique()
+                        .HasFilter("[EndDate] IS NULL");
+
+                    b.ToTable("VehicleOwnership");
+                });
+
             modelBuilder.Entity("WellDoneGarageApi.Models.Invoice", b =>
                 {
                     b.HasOne("WellDoneGarageApi.Models.Customer", "Customer")
@@ -471,6 +517,35 @@ namespace WellDoneGarageApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("WellDoneGarageApi.Models.VehicleOwnership", b =>
+                {
+                    b.HasOne("WellDoneGarageApi.Models.Customer", "Customer")
+                        .WithMany("VehicleOwnerships")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WellDoneGarageApi.Models.Vehicle", "Vehicle")
+                        .WithMany("OwnershipHistory")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("WellDoneGarageApi.Models.Customer", b =>
+                {
+                    b.Navigation("VehicleOwnerships");
+                });
+
+            modelBuilder.Entity("WellDoneGarageApi.Models.Vehicle", b =>
+                {
+                    b.Navigation("OwnershipHistory");
                 });
 #pragma warning restore 612, 618
         }
