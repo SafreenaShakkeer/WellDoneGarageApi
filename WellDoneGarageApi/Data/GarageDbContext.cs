@@ -128,6 +128,10 @@ namespace WellDoneGarageApi.Data
             modelBuilder.Entity<Item>()
                 .HasQueryFilter(i => !i.IsDeleted);
 
+            // Jobcard query filter
+            modelBuilder.Entity<JobCard>()
+                .HasQueryFilter(i => !i.IsDeleted);
+
             // Vehicle Ownership
             modelBuilder.Entity<VehicleOwnership>()
                 .ToTable("VehicleOwnership");

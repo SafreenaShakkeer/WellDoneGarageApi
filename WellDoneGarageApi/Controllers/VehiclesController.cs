@@ -75,7 +75,7 @@ namespace WellDoneGarageApi.Controllers
                 return Conflict("Vehicle number already exists.");
             }
 
-            var now = DateTime.UtcNow;
+            var now = DateTime.Now;
             var vehicle = new Vehicle
             {
                 CustomerId = vehicleDto.CustomerId,
@@ -143,7 +143,7 @@ namespace WellDoneGarageApi.Controllers
             vehicle.VehicleNumber = vehicleDto.VehicleNumber;
             vehicle.Model = vehicleDto.Model;
             vehicle.Description = vehicleDto.Description;
-            vehicle.UpdatedAt = DateTime.UtcNow;
+            vehicle.UpdatedAt = DateTime.Now;
             await _context.SaveChangesAsync();
 
             var vehicleResponseDto = await _context.Vehicles
@@ -201,7 +201,7 @@ namespace WellDoneGarageApi.Controllers
 
             try
             {
-                var transferDate = DateTime.UtcNow;
+                var transferDate = DateTime.Now;
 
                 // Close current ownership
                 currentOwnership.EndDate = transferDate;
@@ -243,7 +243,7 @@ namespace WellDoneGarageApi.Controllers
                 return NotFound();
             }
             vehicle.IsDeleted = true;
-            vehicle.UpdatedAt = DateTime.UtcNow;
+            vehicle.UpdatedAt = DateTime.Now;
             await _context.SaveChangesAsync();
 
             return NoContent();

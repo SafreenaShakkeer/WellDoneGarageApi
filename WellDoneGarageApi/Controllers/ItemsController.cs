@@ -66,7 +66,7 @@ namespace WellDoneGarageApi.Controllers
                 Description = itemDto.Description,
                 UnitPrice = itemDto.UnitPrice,
                 CurrentStock = 0, // Default stock to 0 when creating a new item
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.Now
             };
             _context.Items.Add(item);
             await _context.SaveChangesAsync();
@@ -93,7 +93,7 @@ namespace WellDoneGarageApi.Controllers
             item.Name = itemDto.Name;
             item.Description = itemDto.Description;
             item.UnitPrice = itemDto.UnitPrice;
-            item.UpdatedAt = DateTime.UtcNow;
+            item.UpdatedAt = DateTime.Now;
             await _context.SaveChangesAsync();
 
             var itemResponseDto = new ItemResponseDto
@@ -118,7 +118,7 @@ namespace WellDoneGarageApi.Controllers
                 return NotFound();
             }
             item.IsDeleted = true;
-            item.UpdatedAt = DateTime.UtcNow;
+            item.UpdatedAt = DateTime.Now;
             await _context.SaveChangesAsync();
 
             return NoContent();

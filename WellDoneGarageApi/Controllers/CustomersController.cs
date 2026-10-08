@@ -60,7 +60,7 @@ namespace WellDoneGarageApi.Controllers
             {
                 Name = customerDto.Name,
                 Phone = customerDto.Phone,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.Now
             };
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
@@ -85,7 +85,7 @@ namespace WellDoneGarageApi.Controllers
             }
             existingCustomer.Name = customerDto.Name;
             existingCustomer.Phone = customerDto.Phone;
-            existingCustomer.UpdatedAt = DateTime.UtcNow;
+            existingCustomer.UpdatedAt = DateTime.Now;
             await _context.SaveChangesAsync();
             var customerResponseDto = new CustomerResponseDto {
                 Id = existingCustomer.Id,
@@ -106,7 +106,7 @@ namespace WellDoneGarageApi.Controllers
                 return NotFound();
             }
             existingCustomer.IsDeleted = true;
-            existingCustomer.UpdatedAt = DateTime.UtcNow;
+            existingCustomer.UpdatedAt = DateTime.Now;
             await _context.SaveChangesAsync();
 
             return NoContent();

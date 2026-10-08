@@ -86,7 +86,7 @@ namespace WellDoneGarageApi.Controllers
                 item.CurrentStock -= stockTransactionCreateDto.Quantity;
             }
 
-            item.UpdatedAt = DateTime.UtcNow;
+            item.UpdatedAt = DateTime.Now;
 
             var stockTransaction = new StockTransaction
             {
@@ -95,7 +95,7 @@ namespace WellDoneGarageApi.Controllers
                 TransactionType = stockTransactionCreateDto.TransactionType,
                 ReferenceType = stockTransactionCreateDto.ReferenceType,
                 ReferenceId = stockTransactionCreateDto.ReferenceId,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.Now
             };
             _context.StockTransactions.Add(stockTransaction);
             await _context.SaveChangesAsync();
